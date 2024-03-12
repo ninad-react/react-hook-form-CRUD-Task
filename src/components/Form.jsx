@@ -16,9 +16,9 @@ const FormContainer = () => {
 
     const form = useForm({
         defaultValues: {
-            firstName: userData?.firstName || '',
-            lastName: userData?.lastName || '',
-            email: userData?.email || '',
+            firstName: '',
+            lastName:  '',
+            email: '',
             password: '',
             confirmPassword: '',
         }
@@ -40,25 +40,19 @@ const FormContainer = () => {
     }
 
     const updateUser = async (data, id) => {
+        const editData = {
+            firstName : data.firstName,
+            lastName : data.lastName,
+            email: data.email,
+            password: data.password,
+            confirmPassword: userData.confirmPassword,
+        }
         try {
-            await axios.put(`http://localhost:8000/users/${id}`, data);
+            await axios.put(`http://localhost:8000/users/${id}`, editData);
             toast.success("User updated successfully !!");
             reset();
         } catch (error) {
             toast.error(error.message);
-        }
-    }
-
-    const deleteUser = async (id) => {
-
-        const isConfirmed = window.confirm('Are you sure you want to delete this item?');
-        if(isConfirmed){
-            try {
-                await axios.delete(`http://localhost:8000/users/${id}`);
-            }
-            catch (error) {
-                toast.error(error.message);
-            }
         }
     }
 
@@ -103,9 +97,16 @@ const FormContainer = () => {
                         type='text'
                         id='firstName'
                         {...register("firstName", {
-                            required: {
-                                message: 'FirstName is required'
-                            }
+                            required: 'FirstName is required',
+                            minLength: {
+                                value: 3,
+                                message: "FirstName must be at least 3 characters"
+                              },
+                              maxLength: {
+                                value: 10,
+                                message: "FirstName cannot exceed 20 characters"
+                              }
+                            
                         })}
                         value={watch('firstName')}
                     />
@@ -118,13 +119,19 @@ const FormContainer = () => {
                         type='text'
                         id='lastName'
                         {...register("lastName", {
-                            required: {
-                                value: true,
-                                message: 'LastName is required'
-                            }
+                            required: 'LastName is required',
+                            minLength: {
+                                value: 3,
+                                message: "LastName must be at least 3 characters"
+                              },
+                              maxLength: {
+                                value: 10,
+                                message: "LastName cannot exceed 20 characters"
+                              }
+                            
                         })}
                     />
-                    <p className="error">{errors.firstName?.message}</p>
+                    <p className="error">{errors.lastName?.message}</p>
                 </div>
 
                 <div className="form-control">
@@ -140,6 +147,13 @@ const FormContainer = () => {
                             pattern: {
                                 value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
                                 message: 'Invalid email format'
+                            },
+                            validate: {
+                                emailAvailable: async (fieldValue) => {
+                                    const response = await fetch(`http://localhost:8000/users?email${fieldValue}`);
+                                    const data = await response.json();
+                                    return data.length === 0  || "Email already exists";
+                                }
                             }
                         })}
                     />
@@ -161,7 +175,7 @@ const FormContainer = () => {
                     <p className="error">{errors.password?.message}</p>
                 </div>
 
-                <div className="form-control">
+                {!userid && <div className="form-control">
                     <label htmlFor='confirmPassword'>Confirm Password</label>
                     <input
                         type='text'
@@ -179,7 +193,7 @@ const FormContainer = () => {
                         })}
                     />
                     <p className="error">{errors.confirmPassword?.message}</p>
-                </div>
+                </div>}
 
                 <Stack spacing={2} direction={'row'}>
                     <Button type="submit" variant="contained" size="small" >

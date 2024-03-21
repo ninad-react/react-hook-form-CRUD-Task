@@ -148,13 +148,13 @@ const FormContainer = () => {
                                 value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
                                 message: 'Invalid email format'
                             },
-                            validate: {
-                                emailAvailable: async (fieldValue) => {
-                                    const response = await fetch(`http://localhost:8000/users?email${fieldValue}`);
-                                    const data = await response.json();
-                                    return data.length === 0  || "Email already exists";
-                                }
-                            }
+                            // validate: {
+                            //     emailAvailable: async (fieldValue) => {
+                            //         const response = await fetch(`http://localhost:8000/users?email${fieldValue}`);
+                            //         const data = await response.json();
+                            //         return data.length === 0  || "Email already exists";
+                            //     }
+                            // }
                         })}
                     />
                     <p className="error">{errors.email?.message}</p>

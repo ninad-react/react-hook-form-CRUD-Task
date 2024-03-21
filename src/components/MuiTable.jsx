@@ -75,8 +75,29 @@ const filterData = data?.filter((item) => {
                 <TableCell>Actions</TableCell>
             </TableHead>
             <TableBody>
-            { searchData === '' ? (
-                    data.map( row => (
+                {(searchData === '' ? data : filterData).map( row => (
+                        <TableRow 
+                            key={row.id}
+                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                        >
+                            <TableCell>{row?.id}</TableCell>
+                            <TableCell>{row?.firstName}</TableCell>
+                            <TableCell>{row?.lastName}</TableCell>
+                            <TableCell>{row.email}</TableCell>
+                            <TableCell>
+                                <div style={{display:"flex"}}>
+                                    <IconButton aria-label='edit' color='success' size='small' onClick={() => handleEditUser(row?.id)}>
+                                        <EditIcon />
+                                    </IconButton>
+                                    <IconButton aria-label='edit' color='warning' size='small' onClick={() => deleteUser(row?.id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+            {/* { searchData === '' ? (
+                    data?.map( row => (
                         <TableRow 
                             key={row.id}
                             sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -97,7 +118,7 @@ const filterData = data?.filter((item) => {
                             </TableCell>
                         </TableRow>
                     ))) : (
-                        filterData.map( row => (
+                        filterData?.map( row => (
                             <TableRow 
                                 key={row.id}
                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -105,7 +126,7 @@ const filterData = data?.filter((item) => {
                                 <TableCell>{row?.id}</TableCell>
                                 <TableCell>{row?.firstName}</TableCell>
                                 <TableCell>{row?.lastName}</TableCell>
-                                <TableCell>{row.email}</TableCell>
+                                <TableCell>{row?.email}</TableCell>
                                 <TableCell>
                                     <div style={{display:"flex"}}>
                                         <IconButton aria-label='edit' color='success' size='small' onClick={() => handleEditUser(row?.id)}>
@@ -119,7 +140,7 @@ const filterData = data?.filter((item) => {
                             </TableRow>
                         ))
                     )
-                }
+                } */}
             </TableBody>
         </Table>
     </TableContainer>

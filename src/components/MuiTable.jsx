@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const MuiTable = () => {
+const MuiTable = ({ searchData }) => {
 
   const [ data , setData ] = useState([]);
   const navigate = useNavigate();
@@ -52,6 +52,13 @@ const MuiTable = () => {
     }
 }
 
+const filterData = data?.filter((item) => {
+    return (
+        item?.firstName.toLowerCase().includes(searchData?.toLowerCase()) || 
+        item?.lastName.toLowerCase().includes(searchData?.toLowerCase())
+    )
+})
+
   useEffect(() => {
     fetchData();
   }, [])
@@ -68,7 +75,7 @@ const MuiTable = () => {
                 <TableCell>Actions</TableCell>
             </TableHead>
             <TableBody>
-                {
+            { searchData === '' ? (
                     data.map( row => (
                         <TableRow 
                             key={row.id}
@@ -89,7 +96,29 @@ const MuiTable = () => {
                                 </div>
                             </TableCell>
                         </TableRow>
-                    ))
+                    ))) : (
+                        filterData.map( row => (
+                            <TableRow 
+                                key={row.id}
+                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                            >
+                                <TableCell>{row?.id}</TableCell>
+                                <TableCell>{row?.firstName}</TableCell>
+                                <TableCell>{row?.lastName}</TableCell>
+                                <TableCell>{row.email}</TableCell>
+                                <TableCell>
+                                    <div style={{display:"flex"}}>
+                                        <IconButton aria-label='edit' color='success' size='small' onClick={() => handleEditUser(row?.id)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton aria-label='edit' color='warning' size='small' onClick={() => deleteUser(row?.id)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    )
                 }
             </TableBody>
         </Table>
